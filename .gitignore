@@ -1,0 +1,11 @@
+# Thư mục build của Maven/Eclipse
+/target/
+/bin/
+
+# File setting của Eclipse
+.project
+.classpath
+.settings/
+
+# File log, v.v.
+*.log
