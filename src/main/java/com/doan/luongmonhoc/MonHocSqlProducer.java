@@ -14,9 +14,9 @@ public class MonHocSqlProducer {
 
  private final static String QUEUE_NAME = "monhoc_queue";
  // Kết nối đến DB Nguồn 2
- private static final String DB_NGUON_2_URL = "jdbc:sqlserver://LAPTOPCUABINH:1433;databaseName=QuanLyDiem_SQL;encrypt=false;";
- private static final String DB_USER = "doan_app";
- private static final String DB_PASS = "123456";
+ private static final String DB_NGUON_2_URL = "jdbc:sqlserver://DESKTOP-2EBIQK\\SQLEXPRESS:1433;databaseName=QuanLyDiem_SQL;encrypt=false;";
+ private static final String DB_USER = "sa1";
+ private static final String DB_PASS = "chien123";
 
  public static void main(String[] argv) throws Exception {
      ConnectionFactory factory = new ConnectionFactory();

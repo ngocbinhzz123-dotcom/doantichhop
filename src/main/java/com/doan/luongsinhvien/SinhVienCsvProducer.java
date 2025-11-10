@@ -23,7 +23,7 @@ public class SinhVienCsvProducer {
          channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
          // TODO:Thay đổi đường dẫn này cho đúng với file của bạn
-         String csvFilePath = "D:\\dowload\\fileexcel\\sinhvien.csv"; 
+         String csvFilePath = "D:\\download D\\sinhvien.csv"; 
 
          try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
              

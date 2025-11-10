@@ -14,9 +14,14 @@ public class SinhVienSqlProducer {
  private final static String QUEUE_NAME = "sinhvien_queue";
  
  // TODO: Sửa tên DB Nguồn 2 nếu khác
- private static final String DB_NGUON_2_URL = "jdbc:sqlserver://LAPTOPCUABINH:1433;databaseName=QuanLyDiem_SQL;encrypt=false;";
- private static final String DB_USER = "doan_app";
- private static final String DB_PASS = "123456";
+ private static final String DB_DICH_URL =
+		    "jdbc:sqlserver://DESKTOP-2E2BIQK\\SQLEXPRESS;databaseName=QuanLyDiem_SQL;encrypt=false;";
+
+
+
+
+ private static final String DB_USER = "sa1";
+ private static final String DB_PASS = "chien123";
  
  public static void main(String[] argv) throws Exception {
      ConnectionFactory factory = new ConnectionFactory();
@@ -26,7 +31,7 @@ public class SinhVienSqlProducer {
           Channel rabbitChannel = rabbitConnection.createChannel();
           
           // Kết nối DB Nguồn 2
-    	 java.sql.Connection sqlConnection = DriverManager.getConnection(DB_NGUON_2_URL, DB_USER, DB_PASS);
+    	 java.sql.Connection sqlConnection = DriverManager.getConnection(DB_DICH_URL, DB_USER, DB_PASS);
          Statement stmt = sqlConnection.createStatement()) {
 
          rabbitChannel.queueDeclare(QUEUE_NAME, true, false, false, null);

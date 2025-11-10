@@ -17,9 +17,9 @@ public class SinhVienConsumer {
     private final static String QUEUE_NAME = "sinhvien_queue";
     
     // Sửa lại chuỗi kết nối (dùng user/pass và đúng tên DB Đích)
-    private static final String DB_DICH_URL = "jdbc:sqlserver://LAPTOPCUABINH:1433;databaseName=QuanLyDiem_STAGING;encrypt=false;";
-    private static final String DB_USER = "doan_app";
-    private static final String DB_PASS = "123456";
+    private static final String DB_DICH_URL = "jdbc:sqlserver://DESKTOP-2EBIQK\\SQLEXPRESS:1433;databaseName=QuanLyDiem_STAGING;encrypt=false;";
+    private static final String DB_USER = "sa1";
+    private static final String DB_PASS = "chien123";
     
     // Câu lệnh INSERT vào bảng STAGING_SINHVIEN
     private static final String SQL_INSERT_STAGING = "INSERT INTO STAGING_SINHVIEN " +
