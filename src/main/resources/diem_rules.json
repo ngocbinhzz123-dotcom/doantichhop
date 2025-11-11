@@ -1,0 +1,10 @@
+{
+  "MaSV": { "checkNull": true, "checkForeignKey": true },
+  "MaLopHP": { "checkNull": true, "checkForeignKey": true, "checkDuplicatePair": true },
+  "CheckDiem": { 
+    "checkNull": true,
+    "regex": "^([0-9]|10)(\\.[0-9]{1,2})?$",
+    "min": 0,
+    "max": 10
+  }
+}

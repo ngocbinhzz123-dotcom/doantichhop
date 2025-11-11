@@ -1,6 +1,6 @@
 package com.doan.luonglophocphan;
 
-import com.doan.util.DBConnetor;
+import com.doan.util.ketnoi;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -32,7 +32,7 @@ public class LopHocPhanConsumer {
         System.out.println(" [*] Đang chờ message [LopHocPhan] để lưu vào STAGING...");
 
         try {
-            sqlConnection = DBConnetor.getConnectionDich(); // Đã sửa
+            sqlConnection = ketnoi.getConnectionDich(); // Đã sửa
             System.out.println("Ket noi DB Dich [QuanLyDiemSV] thanh cong!");
             
             final java.sql.Connection finalSqlConnection = sqlConnection;

@@ -1,6 +1,6 @@
 package com.doan.luonggiangvien;
 
-import com.doan.util.DBConnetor; // Đã import
+import com.doan.util.ketnoi; // Đã import
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -22,7 +22,7 @@ public class GiangVienSqlProducer {
         try (Connection rabbitConnection = factory.newConnection();
              Channel rabbitChannel = rabbitConnection.createChannel();
              
-             java.sql.Connection sqlConnection = DBConnetor.getConnectionNguon2(); // Đã sửa
+             java.sql.Connection sqlConnection = ketnoi.getConnectionNguon2(); // Đã sửa
              Statement stmt = sqlConnection.createStatement()) {
 
             rabbitChannel.queueDeclare(QUEUE_NAME, true, false, false, null);

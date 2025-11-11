@@ -1,6 +1,6 @@
 package com.doan.luonggiangvien;
 
-import com.doan.util.DBConnetor; // Đã import
+import com.doan.util.ketnoi; // Đã import
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -33,7 +33,7 @@ public class GiangVienConsumer {
         System.out.println(" [*] Đang chờ message [GiangVien] để lưu vào STAGING...");
 
         try {
-            sqlConnection = DBConnetor.getConnectionDich(); // Đã sửa
+            sqlConnection = ketnoi.getConnectionDich(); // Đã sửa
             System.out.println("Ket noi DB Dich [QuanLyDiemSV] thanh cong!");
             
             final java.sql.Connection finalSqlConnection = sqlConnection;

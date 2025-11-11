@@ -1,0 +1,11 @@
+{
+  "MaKhoa": {
+    "checkNull": true,
+    "checkDuplicate": true,
+    "maxLength": 10
+  },
+  "TenKhoa": {
+    "checkNull": true,
+    "maxLength": 100
+  }
+}

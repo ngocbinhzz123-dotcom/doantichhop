@@ -5,15 +5,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBConnetor {
+public class ketnoi {
 
-    // === CHỈ CẦN SỬA 2 DÒNG NÀY KHI CHUYỂN MÁY ===
-    private static final String SERVER_NAME = "LAPTOPCUABINH"; // <-- Đã sửa
-    private static final boolean IS_NAMED_INSTANCE = false;     // <-- Đã sửa
-    private static final String INSTANCE_NAME = "SQLEXPRESS"; // (Chỉ dùng khi IS_NAMED_INSTANCE = true)
-    // ==============================================
+    private static final String SERVER_NAME = "LAPTOPCUABINH"; 
+    private static final boolean IS_NAMED_INSTANCE = false;
+    private static final String INSTANCE_NAME = "SQLEXPRESS"; 
 
-    // Thông tin Login
     private static final String DB_USER = "doan_app";
     private static final String DB_PASS = "123456";
 

@@ -1,6 +1,6 @@
 package com.doan.luongmonhoc;
 
-import com.doan.util.DBConnetor;
+import com.doan.util.ketnoi;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -14,8 +14,6 @@ import java.sql.SQLException;
 public class MonHocConsumer {
 
     private final static String QUEUE_NAME = "monhoc_queue";
-    
-    // (Đã xóa URL, USER, PASS)
     
     private static final String SQL_INSERT_STAGING = "INSERT INTO STAGING_MONHOC " +
         "(MaMon, TenMon, SoTinChi, HeSo, NguonDuLieu, TrangThaiQC) " +
@@ -33,7 +31,7 @@ public class MonHocConsumer {
         System.out.println(" [*] Đang chờ message [MonHoc] để lưu vào STAGING...");
 
         try {
-            sqlConnection = DBConnetor.getConnectionDich(); // Đã sửa
+            sqlConnection = ketnoi.getConnectionDich(); // Đã sửa
             System.out.println("Ket noi DB Dich [QuanLyDiemSV] thanh cong!");
             
             final java.sql.Connection finalSqlConnection = sqlConnection;

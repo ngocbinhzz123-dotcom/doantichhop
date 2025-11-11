@@ -1,24 +1,21 @@
-package com.doan.luongdiem;
+package com.doan.khoa;
 
 import com.doan.util.ketnoi;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DiemConsumer {
+public class KhoaConsumer {
 
-    private final static String QUEUE_NAME = "diem_queue";
+    private final static String QUEUE_NAME = "khoa_queue";
     
-    // (Đã xóa URL, USER, PASS)
-    
-    private static final String SQL_INSERT_STAGING = "INSERT INTO STAGING_DIEM " +
-        "(MaSV, MaLopHP, DiemPhatBieu, DiemBaiTap, DiemChuyenCan, DiemGiuaKy, DiemDoAn, DiemCuoiKi, NguonDuLieu, TrangThaiQC) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')";
+    private static final String SQL_INSERT_STAGING = "INSERT INTO STAGING_KHOA " +
+        "(MaKhoa, TenKhoa, NguonDuLieu, TrangThaiQC) " +
+        "VALUES (?, ?, ?, 'PENDING')";
 
     public static void main(String[] argv) throws Exception {
         
@@ -29,10 +26,10 @@ public class DiemConsumer {
         java.sql.Connection sqlConnection = null;
 
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-        System.out.println(" [*] Đang chờ message [Diem] để lưu vào STAGING...");
+        System.out.println(" [*] Đang chờ message [Khoa] để lưu vào STAGING...");
 
         try {
-            sqlConnection = ketnoi.getConnectionDich(); // Đã sửa
+            sqlConnection = ketnoi.getConnectionDich(); 
             System.out.println("Ket noi DB Dich [QuanLyDiemSV] thanh cong!");
             
             final java.sql.Connection finalSqlConnection = sqlConnection;
@@ -40,24 +37,24 @@ public class DiemConsumer {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
                 
+                // Bỏ qua message rỗng
+                if (message == null || message.trim().isEmpty()) {
+                    System.err.println(" ! Lỗi: Nhận được message rỗng, bỏ qua.");
+                    return; 
+                }
+
                 try (PreparedStatement ps = finalSqlConnection.prepareStatement(SQL_INSERT_STAGING)) {
                     
                     String nguon = message.substring(0, 3);
                     String payloadStr = message.substring(4);
                     String[] data = payloadStr.split(",");
                     
-                    ps.setString(1, data[0]); // MaSV
-                    ps.setString(2, data[1]); // MaLopHP
-                    ps.setString(3, data[2]); // DiemPhatBieu
-                    ps.setString(4, data[3]); // DiemBaiTap
-                    ps.setString(5, data[4]); // DiemChuyenCan
-                    ps.setString(6, data[5]); // DiemGiuaKy
-                    ps.setString(7, data[6]); // DiemDoAn
-                    ps.setString(8, data[7]); // DiemCuoiKi
-                    ps.setString(9, nguon);   // NguonDuLieu
+                    ps.setString(1, data[0]); // MaKhoa
+                    ps.setString(2, data[1]); // TenKhoa
+                    ps.setString(3, nguon);   // NguonDuLieu
                     
                     ps.executeUpdate();
-                    System.out.println("    -> Đã lưu vào STAGING_DIEM: " + data[0] + " - " + data[1]);
+                    System.out.println("    -> Đã lưu vào STAGING_KHOA: " + data[0]);
 
                 } catch (SQLException e) {
                     System.err.println(" ! Lỗi SQL khi INSERT vào STAGING: " + e.getMessage());

@@ -1,6 +1,6 @@
 package com.doan.luongsinhvien;
 
-import com.doan.util.DBConnetor; 
+import com.doan.util.ketnoi; 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -23,7 +23,7 @@ public class SinhVienSqlProducer {
              Channel rabbitChannel = rabbitConnection.createChannel();
              
              // 2. GỌI HÀM KẾT NỐI NGUỒN 2 TỪ FILE CHUNG
-             java.sql.Connection sqlConnection = DBConnetor.getConnectionNguon2();
+             java.sql.Connection sqlConnection = ketnoi.getConnectionNguon2();
              Statement stmt = sqlConnection.createStatement()) {
 
             rabbitChannel.queueDeclare(QUEUE_NAME, true, false, false, null);

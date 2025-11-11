@@ -1,0 +1,20 @@
+{
+  "MaGV": { 
+    "checkNull": true, 
+    "checkDuplicate": true,
+    "regex": "^GV\\d{3}$"
+  },
+  "HoTen": { 
+    "checkNull": true,
+    "regex": "^[a-zA-ZÀ-ỹ ]+$"
+  },
+  "MaKhoa": { "checkNull": true, "checkForeignKey": true },
+  "Email": { 
+    "checkNull": true, 
+    "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"
+  },
+  "SDT": { 
+    "checkNull": true, 
+    "regex": "^0\\d{9}$" 
+  }
+}

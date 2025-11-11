@@ -1,0 +1,17 @@
+{
+  "MaLopHP": { 
+    "checkNull": true, 
+    "checkDuplicate": true,
+    "regex": "^LHP\\d{3}$"
+  },
+  "MaMon": { "checkNull": true, "checkForeignKey": true },
+  "MaGV": { "checkNull": true, "checkForeignKey": true },
+  "HocKy": { 
+    "checkNull": true, 
+    "regex": "^[1-3]$"
+  },
+  "NamHoc": { 
+    "checkNull": true, 
+    "regex": "^(20)\\d{2}$"
+  }
+}

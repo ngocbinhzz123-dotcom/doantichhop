@@ -1,0 +1,25 @@
+{
+  "MaSV": { 
+    "checkNull": true, 
+    "checkDuplicate": true,
+    "regex": "^SV\\d{3}$"
+  },
+  "HoTen": { 
+    "checkNull": true, 
+    "maxLength": 100,
+    "regex": "^[a-zA-ZÀ-ỹ ]+$"
+  },
+  "NgaySinh": { 
+    "checkNull": true, 
+    "regex": "^\\d{4}-\\d{2}-\\d{2}$" 
+  },
+  "MaKhoa": { "checkNull": true, "checkForeignKey": true },
+  "Email": { 
+    "checkNull": true,
+    "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"
+  },
+  "SDT": { 
+    "checkNull": true, 
+    "regex": "^0\\d{9}$" 
+  }
+}

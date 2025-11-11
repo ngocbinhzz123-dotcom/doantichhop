@@ -1,0 +1,17 @@
+{
+  "MaMon": { 
+    "checkNull": true, 
+    "checkDuplicate": true,
+    "regex": "^MH\\d{3}$"
+  },
+  "TenMon": { "checkNull": true },
+  "SoTinChi": { 
+    "checkNull": true, 
+    "regex": "^[1-9][0-9]*$"
+  },
+  "HeSo": { 
+    "checkNull": true, 
+    "isDouble": true, 
+    "min": 0 
+  }
+}
