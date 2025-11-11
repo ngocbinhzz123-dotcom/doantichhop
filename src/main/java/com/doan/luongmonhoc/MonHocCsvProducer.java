@@ -30,12 +30,17 @@ public static void main(String[] argv) throws Exception {
            
            String[] line;
            while ((line = reader.readNext()) != null) {
-               
-               // Ghép 4 cột (MaMon,TenMon,SoTinChi,HeSo)
-               String payload = String.join(",", line);
-               String message = "CSV," + payload; // Thêm tiền tố Nguồn
-
-               channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
+        	    String payload = String.join(",", line);
+        	    
+        	    // Check dòng trống (Rất quan trọng)
+        	    if (payload.isEmpty() || payload.matches("^,+$")) {
+        	        continue; // Bỏ qua dòng trống
+        	    }
+        	    
+        	    // Thêm tiền tố "CSV,"
+        	    String message = "CSV," + payload; 
+        	    
+        	    channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));  
                System.out.println(" [CSV-MH] Đã gửi: '" + line[0] + "'");
            }
        }

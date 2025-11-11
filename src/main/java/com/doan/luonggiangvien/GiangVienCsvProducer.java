@@ -21,13 +21,21 @@ public class GiangVienCsvProducer {
 
             channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-            String csvFilePath = "D:\\download D\\sinhvien.csv"; 
+            String csvFilePath = "D:\\dowload\\fileexcel\\giangvien.csv"; 
 
             try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
                 reader.readNext(); // bỏ header
                 String[] line;
                 while ((line = reader.readNext()) != null) {
-                    String message = String.join(",", line);
+                    String payload = String.join(",", line);
+                    
+                    // Check dòng trống (Rất quan trọng)
+                    if (payload.isEmpty() || payload.matches("^,+$")) {
+                        continue; // Bỏ qua dòng trống
+                    }              
+                    // Thêm tiền tố "CSV,"
+                    String message = "CSV," + payload; 
+                    
                     channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
                     System.out.println(" [CSV-GV] Đã gửi: " + line[0]);
                 }

@@ -30,11 +30,16 @@ public class DiemCsvProducer {
                 String[] header = reader.readNext(); // Bỏ qua dòng tiêu đề
                 String[] line;
                 while ((line = reader.readNext()) != null) {
-
-                    // Ghép các cột lại thành 1 message
                     String payload = String.join(",", line);
-                    String message = "CSV," + payload;
-
+                    
+                    // Check dòng trống (Rất quan trọng)
+                    if (payload.isEmpty() || payload.matches("^,+$")) {
+                        continue; // Bỏ qua dòng trống
+                    }
+                    
+                    // Thêm tiền tố "CSV,"
+                    String message = "CSV," + payload; 
+                    
                     channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
                     System.out.println(" [CSV-DIEM] Đã gửi: '" + line[0] + "'");
                 }

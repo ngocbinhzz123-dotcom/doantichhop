@@ -1,25 +1,21 @@
 package com.doan.luongsinhvien;
 
-//File: SinhVienConsumer.java
+import com.doan.util.DBConnetor; // <-- 1. THÊM IMPORT
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types; // [ĐÃ THÊM] Cần import Types
+import java.sql.Types;
 
 public class SinhVienConsumer {
 
     private final static String QUEUE_NAME = "sinhvien_queue";
     
-    // Sửa lại chuỗi kết nối (dùng user/pass và đúng tên DB Đích)
-    private static final String DB_DICH_URL = "jdbc:sqlserver://DESKTOP-2EBIQK\\SQLEXPRESS:1433;databaseName=QuanLyDiem_STAGING;encrypt=false;";
-    private static final String DB_USER = "sa1";
-    private static final String DB_PASS = "chien123";
+    // (Đã xóa 3 dòng DB_DICH_URL, DB_USER, DB_PASS ở đây)
     
     // Câu lệnh INSERT vào bảng STAGING_SINHVIEN
     private static final String SQL_INSERT_STAGING = "INSERT INTO STAGING_SINHVIEN " +
@@ -31,29 +27,31 @@ public class SinhVienConsumer {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         
-        // [ĐÃ SỬA] Quản lý kết nối RabbitMQ thủ công
         Connection rabbitConnection = factory.newConnection();
         Channel channel = rabbitConnection.createChannel();
         
-        // [ĐÃ SỬA] Khai báo kết nối SQL ở ngoài
-        java.sql.Connection sqlConnection = null;
+        java.sql.Connection sqlConnection = null; // Khai báo ở ngoài
 
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         System.out.println(" [*] Đang chờ message [SinhVien] để lưu vào STAGING...");
 
         try {
-            // [ĐÃ SỬA] Khởi tạo kết nối SQL (không dùng try-with-resources)
-            sqlConnection = DriverManager.getConnection(DB_DICH_URL, DB_USER, DB_PASS);
-            System.out.println("Kết nối DB Đích [QuanLyDiem_DoAn] thành công!");
+            // 2. GỌI HÀM KẾT NỐI ĐÍCH TỪ FILE CHUNG
+            sqlConnection = DBConnetor.getConnectionDich(); 
             
-            // [ĐÃ SỬA] Tạo biến final để dùng trong lambda
+            // Tên DB 'QuanLyDiemSV' được lấy từ file DBConnector
+            System.out.println("Kết nối DB Đích [QuanLyDiem_STAGING] thành công!"); 
+            
             final java.sql.Connection finalSqlConnection = sqlConnection;
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                String[] data = message.split(",");
+                
+                // Tách message
+                String nguon = message.substring(0, 3); // "CSV" hoặc "SQL"
+                String payloadStr = message.substring(4); // Dữ liệu
+                String[] data = payloadStr.split(",");
 
-                // [ĐÃ SỬA] Dùng kết nối 'finalSqlConnection'
                 try (PreparedStatement ps = finalSqlConnection.prepareStatement(SQL_INSERT_STAGING)) {
                     
                     ps.setString(1, data[0]); // MaSV
@@ -63,17 +61,14 @@ public class SinhVienConsumer {
                     ps.setString(5, data[4]); // MaLop
                     ps.setString(6, data[5]); // MaKhoa
 
-                    if (data.length == 8) {
-                        // Message từ CSV (có 8 cột)
+                    if (nguon.equals("CSV")) { // Dữ liệu CSV có 8 cột
                         ps.setString(7, data[6]); // Email
                         ps.setString(8, data[7]); // SDT
-                        ps.setString(9, "CSV");   // NguonDuLieu
-                    } else {
-                        // Message từ SQL Nguồn 2 (chỉ có 6 cột)
+                    } else { // Dữ liệu SQL chỉ có 6 cột
                         ps.setNull(7, Types.VARCHAR); // Email = NULL
                         ps.setNull(8, Types.VARCHAR); // SDT = NULL
-                        ps.setString(9, "SQL");  // NguonDuLieu
                     }
+                    ps.setString(9, nguon);   // NguonDuLieu
                     
                     ps.executeUpdate();
                     System.out.println("    -> Đã lưu vào STAGING_SINHVIEN: " + data[0]);
