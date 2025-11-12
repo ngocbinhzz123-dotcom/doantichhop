@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +67,7 @@ public class KhoaCR {
         Gson gson = new Gson();
         InputStream is = KhoaCR.class.getClassLoader().getResourceAsStream("khoa_rules.json");
         if (is == null) throw new Exception("Loi: Khong tim thay file 'khoa_rules.json'");
-        Reader reader = new InputStreamReader(is);
+        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
         cauHinhRule = gson.fromJson(reader, KhoaiFieldRules.class); 
         System.out.println("Da load file config rule [Khoa] thanh cong.");
     }

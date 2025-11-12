@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,7 +66,7 @@ public class MonHocCR {
         Gson gson = new Gson();
         InputStream is = MonHocCR.class.getClassLoader().getResourceAsStream("monhoc_rules.json");
         if (is == null) throw new Exception("Loi: Khong tim thay file 'monhoc_rules.json'");
-        Reader reader = new InputStreamReader(is);
+        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
         cauHinhRule = gson.fromJson(reader, MonHocFieldRules.class); 
         System.out.println("Da load file config rule [MonHoc] thanh cong.");
     }

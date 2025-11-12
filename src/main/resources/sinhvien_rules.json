@@ -11,7 +11,7 @@
   },
   "NgaySinh": { 
     "checkNull": true, 
-    "regex": "^\\d{4}-\\d{2}-\\d{2}$" 
+    "regex": "^\\d{2}-\\d{2}-\\d{4}$"
   },
   "MaKhoa": { "checkNull": true, "checkForeignKey": true },
   "Email": { 

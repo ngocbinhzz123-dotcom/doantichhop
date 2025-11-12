@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.regex.Pattern; 
+import java.time.format.DateTimeFormatter; // <-- THÊM IMPORT NÀY
+import java.time.LocalDate; // <-- THÊM IMPORT NÀY
 
 public class SinhVienCR {
 
@@ -35,13 +37,21 @@ public class SinhVienCR {
                     
                     while (ketQuaStaging.next()) {
                         int stagingId = ketQuaStaging.getInt("StagingID");
+                        String ngaySinhTho = ketQuaStaging.getString("NgaySinh"); // <-- Lấy chuỗi DD-MM-YYYY
+                        
                         try {
                             kiemTraHopLe_SinhVien(conn, ketQuaStaging); 
+                            
+                            // [SỬA LỖI FORMAT] Chuyển đổi DD-MM-YYYY -> YYYY-MM-DD
+                            String ngaySinhSQL = chuyenDoiNgayThang(ngaySinhTho);
                             
                             try (PreparedStatement psInsert = conn.prepareStatement(SQL_INSERT_TARGET)) {
                                 psInsert.setString(1, ketQuaStaging.getString("MaSV"));
                                 psInsert.setString(2, ketQuaStaging.getString("HoTen"));
-                                psInsert.setDate(3, java.sql.Date.valueOf(ketQuaStaging.getString("NgaySinh"))); 
+                                
+                                // Dùng chuỗi SQL đã chuyển đổi
+                                psInsert.setDate(3, java.sql.Date.valueOf(ngaySinhSQL)); 
+                                
                                 psInsert.setString(4, ketQuaStaging.getString("GioiTinh"));
                                 psInsert.setString(5, ketQuaStaging.getString("MaLop"));
                                 psInsert.setString(6, ketQuaStaging.getString("MaKhoa"));
@@ -49,7 +59,7 @@ public class SinhVienCR {
                                 datChuoiChoPhepNull(psInsert, 8, ketQuaStaging.getString("SDT"));
                                 psInsert.executeUpdate();
                             }
-                            capNhatTrangThaiStaging(conn, stagingId, "PASSED");
+                            capNhatTrangThaiStaging(conn, stagingId, "PASSED"); 
                             System.out.println("PASSED [SinhVien]: StagingID " + stagingId);
 
                         } catch (Exception loi) {
@@ -65,6 +75,25 @@ public class SinhVienCR {
         } catch (Exception e) { e.printStackTrace(); }
     }
     
+    // [THÊM HÀM NÀY] Chuyển đổi định dạng ngày tháng
+    private static String chuyenDoiNgayThang(String ngayThangDDMMYYYY) throws Exception {
+        try {
+            // Định nghĩa format đầu vào
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            
+            // Phân tích chuỗi (parse)
+            LocalDate date = LocalDate.parse(ngayThangDDMMYYYY, inputFormatter);
+            
+            // Trả về chuỗi format SQL (YYYY-MM-DD)
+            return date.toString(); 
+            
+        } catch (Exception e) {
+            // Nếu lỗi parse (ví dụ: ngày 32, tháng 13)
+            throw new Exception("Loi dinh dang ngay thang (Khong chuyen doi duoc).");
+        }
+    }
+
+    // --- CÁC HÀM HỖ TRỢ (GIỮ NGUYÊN) ---
     private static void taiCauHinhRule() throws Exception {
         Gson gson = new Gson();
         InputStream is = SinhVienCR.class.getClassLoader().getResourceAsStream("sinhvien_rules.json");
@@ -105,15 +134,21 @@ public class SinhVienCR {
         
         // Check MaKhoa
         if (rule_MaKhoa.isCheckNull() && (maKhoa == null || maKhoa.isEmpty())) throw new Exception("Loi: MaKhoa bi rong (NULL).");
-        if (rule_MaKhoa.isCheckForeignKey() && !kiemTraMaKhoaDaTonTai(conn, maKhoa)) throw new Exception("Loi Khoa Ngoai: MaKhoa '" + maKhoa + "' khong ton tai trong bang KHOA_TBL.");
+        if (rule_MaKhoa.isCheckForeignKey() && !kiemTraMaKhoaDaTonTai(conn, maKhoa)) {
+           throw new Exception("Loi Khoa Ngoai: MaKhoa '" + maKhoa + "' khong ton tai trong bang KHOA_TBL.");
+        }
         
         // Check Email
         if (rule_Email.isCheckNull() && (email == null || email.isEmpty())) throw new Exception("Loi: Email bi rong (NULL).");
-        if (rule_Email.getRegex() != null && !Pattern.matches(rule_Email.getRegex(), email)) throw new Exception("Loi Regex: Email '" + email + "' khong dung dinh dang.");
+        if (rule_Email.getRegex() != null && !Pattern.matches(rule_Email.getRegex(), email)) {
+            throw new Exception("Loi Regex: Email '" + email + "' khong dung dinh dang.");
+        }
 
         // Check SDT
         if (rule_SDT.isCheckNull() && (sdt == null || sdt.isEmpty())) throw new Exception("Loi: SDT bi rong (NULL).");
-        if (rule_SDT.getRegex() != null && !Pattern.matches(rule_SDT.getRegex(), sdt)) throw new Exception("Loi Regex: SDT '" + sdt + "' khong dung dinh dang (10 so, bat dau bang 0).");
+        if (rule_SDT.getRegex() != null && !Pattern.matches(rule_SDT.getRegex(), sdt)) {
+            throw new Exception("Loi Regex: SDT '" + sdt + "' khong dung dinh dang (10 so, bat dau bang 0).");
+        }
     }
     
     private static boolean kiemTraMaSvDaTonTai(Connection conn, String maSV) throws SQLException {

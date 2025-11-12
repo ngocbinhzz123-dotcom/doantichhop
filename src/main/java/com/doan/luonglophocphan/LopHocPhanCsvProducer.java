@@ -5,7 +5,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public class LopHocPhanCsvProducer {
@@ -21,26 +22,33 @@ public class LopHocPhanCsvProducer {
 
             channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-            String csvFilePath = "D:\\dowload\\fileexcel\\lop.csv"; 
+            // Đường dẫn CSV
+            String csvFilePath = "D:\\dowload\\fileexcel\\lop.csv";
 
-            try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
-                reader.readNext(); // bỏ header
+            // Sử dụng InputStreamReader với UTF-8
+            try (CSVReader reader = new CSVReader(
+                    new InputStreamReader(new FileInputStream(csvFilePath), StandardCharsets.UTF_8))) {
+
+                reader.readNext(); // Bỏ header
                 String[] line;
                 while ((line = reader.readNext()) != null) {
                     String payload = String.join(",", line);
-                    
-                    // Check dòng trống (Rất quan trọng)
+
+                    // Bỏ qua dòng trống
                     if (payload.isEmpty() || payload.matches("^,+$")) {
-                        continue; // Bỏ qua dòng trống
+                        continue;
                     }
-                    
+
                     // Thêm tiền tố "CSV,"
-                    String message = "CSV," + payload; 
-                    
+                    String message = "CSV," + payload;
+
+                    // Gửi message qua RabbitMQ với UTF-8
                     channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
                     System.out.println(" [CSV-LHP] Đã gửi: " + line[0]);
                 }
             }
         }
+
+        System.out.println("✅ Hoàn tất gửi dữ liệu Lớp Học Phần từ CSV!");
     }
 }
